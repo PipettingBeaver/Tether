@@ -2,7 +2,7 @@
 
 > **The current version is for testing only! Please reach out to me (Tan) for support if you're trying it!**
 
-Tether is a small Discord add-on for people who are bad at keeping in touch. It notices when you haven't talked to a friend in a while and gives you a gentle nudge. From there you can message them, delay the reminder for a few days, or untether them so Tether stops asking
+Tether is a small Discord add-on to help keep in touch. It notices when you haven't talked to a friend in a while and gives you a gentle nudge, with options to message them, delay the reminder, or untether them.
 
 <img width="500" alt="Tether friend check-in UI" src="https://github.com/user-attachments/assets/f5ddf87e-3671-46bc-b65f-ca161b195aeb" />
 
