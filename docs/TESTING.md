@@ -14,13 +14,13 @@ Four artifacts are built for testers. Attach them to a GitHub release rather tha
 Rebuild the desktop packages after changes with:
 
 ```sh
-node TestingVersion/build-testing.mjs
+node tools/build-testing.mjs
 ```
 
 Rebuild the browser userscript with:
 
 ```sh
-node TestingVersion/build-browser.mjs
+node tools/build-browser.mjs
 ```
 
 Keep the generated files outside the repository. When they are inside it, Vencord's typecheck and linter scan the minified userscript and fail.

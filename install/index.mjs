@@ -14,7 +14,7 @@ import { fileURLToPath } from "node:url";
 
 const VENCORD_TARBALL = "https://codeload.github.com/Vencord/Vencord/tar.gz/refs/heads/main";
 const PLUGIN_NAME = "tether";
-const SOURCE_DIR = resolve(dirname(fileURLToPath(import.meta.url)), "..");
+const SOURCE_DIR = resolve(dirname(fileURLToPath(import.meta.url)), "..", "src");
 const SKIPPED_SOURCES = new Set([".git", "install", "node_modules", "tsconfig.json", "update-vencord.sh"]);
 
 const args = process.argv.slice(2);

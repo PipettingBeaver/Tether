@@ -81,7 +81,7 @@ What to fix before release:
 2. Add a `LICENSE` file. Every source file already carries GPL-3.0-or-later headers, but the repository needs the license text.
 3. Add a `.gitignore`. Done.
 4. README: add screenshots, a short feature list, and all three install paths (installer for friends, Vesktop custom build by hand, and eventually upstream).
-5. Move local-only tooling (`tsconfig.json` aliasing, `update-vencord.sh`) into a clearly named `dev/` directory or document it as development-only.
+5. Local-only tooling lives in `tools/` now (`build-testing.mjs`, `build-browser.mjs`, `update-vencord.sh`), which keeps the repository root clean for visitors.
 6. Tag a version and keep a short changelog.
 7. Note in the README that the installer writes Vesktop's Vencord location, so quitting Vesktop first is required.
 

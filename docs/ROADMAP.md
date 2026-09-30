@@ -68,7 +68,7 @@ pnpm -C ~/PipettingBeaver_Github/Vencord testTsc
 pnpm -C ~/PipettingBeaver_Github/Vencord exec eslint src/userplugins/tether
 
 # update Vencord core (then restart Vesktop)
-~/PipettingBeaver_Github/Tether/update-vencord.sh
+~/PipettingBeaver_Github/Tether/tools/update-vencord.sh
 ```
 
 Vesktop must be fully restarted (tray quit) to load a new build.

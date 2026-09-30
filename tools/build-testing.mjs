@@ -15,7 +15,7 @@ const HERE = dirname(fileURLToPath(import.meta.url));
 const ROOT = resolve(HERE, "..");
 const OUT = resolve(process.argv.find(arg => arg.startsWith("--out="))?.split("=")[1] ?? join(HERE, "..", "..", "Tether-Testing"));
 const BUILD = join(tmpdir(), "tether-testing-build");
-const EXCLUDED = new Set([".git", "TestingVersion", "node_modules", "dist"]);
+const EXCLUDED = new Set([".git", "tools", "node_modules", "dist"]);
 
 function copyRepo(destination) {
     rmSync(destination, { recursive: true, force: true });

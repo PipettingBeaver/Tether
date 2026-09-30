@@ -1,0 +1,22 @@
+{
+    "compilerOptions": {
+        "jsx": "preserve",
+        "module": "esnext",
+        "moduleResolution": "bundler",
+        "target": "ESNEXT",
+        "strict": true,
+        "noImplicitAny": false,
+        "allowSyntheticDefaultImports": true,
+        "esModuleInterop": true,
+        "paths": {
+            "@api/*": ["../../Vencord/src/api/*"],
+            "@components/*": ["../../Vencord/src/components/*"],
+            "@utils/*": ["../../Vencord/src/utils/*"],
+            "@webpack/common": ["../../Vencord/src/webpack/common"],
+            "@webpack/common/*": ["../../Vencord/src/webpack/common/*"],
+            "@webpack": ["../../Vencord/src/webpack/webpack"],
+            "@webpack/patcher": ["../../Vencord/src/webpack/patchWebpack"],
+            "@vencord/discord-types/enums": ["../../Vencord/packages/discord-types/enums/index.ts"]
+        }
+    }
+}
