@@ -36,7 +36,8 @@ In the plugin list for Vencord, this is how Tether appears:
 
 ## d) Browser
 
-1. Install a userscript manager like ViolentMonkey on Chrome, Edge, Opera, or Safari. On Firefox, if using ViolentMonkey, in Settings enable "Bypass CSP in Firefox" since Tether does not work without it.
+1. Install a userscript manager (Such as ViolentMonkey on [Chrome](https://chromewebstore.google.com/detail/violentmonkey/jinjaccalgkegednnccohejagnlnfdag) or [Firefox](https://addons.mozilla.org/en-US/firefox/addon/violentmonkey/)).
+   - if using ViolentMonkey for Firefox, in Settings enable "Bypass CSP in Firefox" since Tether does not work without it.
 2. If you already use Vencord in your browser, remove or disable it first (Tether currently comes with a bundled unofficial Vencord, as Vencord is required as a framework). 
 3. Install the userscript from [this link](https://github.com/PipettingBeaver/Tether/releases/latest/download/Vencord-with-Tether.user.js), or paste the link into your manager's install-from-URL feature:
 4. Reload the Discord tab. Tether is on by default.
@@ -60,6 +61,8 @@ Discord only shares your most recent conversations with any plugin via API calls
 ## Questions
 
 - **Is Tether safe?** Tether doesn't do anything with your data! Tether sends API calls from your machine, to your machine, to read your friend list and when each conversation was last active. It never reads message contents. API calls happen intermittently to avoid bot warnings.
+- 
+- **What do I do if I found a bug?** Please reach out to me (either Github or on Discord) with a bug report! Use `ctrl+shift+i` to bring up the Console, and please send contents of the "Tether" related warning messages.
 
 - **Why does it install / require Vencord?** Tether is a written as a plugin for Vencord, a client and framework mod of Discord, so it ships inside a Vencord build. You do not need to install Vencord yourself.
 
