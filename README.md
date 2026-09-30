@@ -34,7 +34,7 @@ In the plugin list for Vencord, this is how Tether appears:
 2. Quit Discord, Vencord, or Vesktop completely.
 3. Extract it, then run `bash "Linux - Start Here.sh"`, or right click the file and choose Run in Terminal.
 
-## d) Browser
+## d) Browser (Web-based Discord)
 
 1. Install a userscript manager (Such as ViolentMonkey on [Chrome](https://chromewebstore.google.com/detail/violentmonkey/jinjaccalgkegednnccohejagnlnfdag) or [Firefox](https://addons.mozilla.org/en-US/firefox/addon/violentmonkey/)).
    - if using ViolentMonkey for Firefox, in Settings enable "Bypass CSP in Firefox" since Tether does not work without it.
