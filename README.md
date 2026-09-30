@@ -76,4 +76,4 @@ Discord only shares your most recent conversations with any plugin via API calls
 
 ## For curious developers
 
-Architecture, review notes, roadmap, and the testing guide are in `docs/ARCHITECTURE.md`, `docs/REVIEW.md`, `docs/ROADMAP.md`, and `docs/TESTING.md`.
+Architecture, review notes, roadmap, and the testing guide are in `docs/ARCHITECTURE.md`, `docs/REVIEW.md`, `docs/ROADMAP.md`, and `docs/TESTING.md`. Notable changes per version are in `CHANGELOG.md`.
