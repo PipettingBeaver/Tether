@@ -10,7 +10,7 @@ import { Flex } from "@components/Flex";
 import { Paragraph } from "@components/Paragraph";
 import { Switch } from "@components/Switch";
 import { RenderModalProps } from "@vencord/discord-types";
-import { Modal, openModal, UserStore, useState } from "@webpack/common";
+import { Modal, openModal, useRef, UserStore, useState } from "@webpack/common";
 
 import { ListMode } from "./engine";
 import { openWhitelistPicker } from "./FriendPicker";
@@ -50,6 +50,7 @@ export function OnboardingModal({ modalProps }: { modalProps: RenderModalProps; 
     const { listMode } = settings.use(["listMode"]);
     const [friendCount] = useState(() => getFriends().length);
     const [, refresh] = useState(0);
+    const autoOpened = useRef(false);
 
     const selectedCount = getFriends().filter(friend => {
         const state = getState()[friend.id];
@@ -58,6 +59,11 @@ export function OnboardingModal({ modalProps }: { modalProps: RenderModalProps; 
 
     function choose(mode: ListMode) {
         settings.store.listMode = mode;
+
+        if (mode === "whitelist" && !autoOpened.current && selectedCount === 0) {
+            autoOpened.current = true;
+            openPicker();
+        }
     }
 
     function openPicker() {
@@ -110,9 +116,14 @@ export function OnboardingModal({ modalProps }: { modalProps: RenderModalProps; 
                 />
 
                 {listMode === "whitelist" && (
-                    <Flex alignItems="center" gap="8px">
-                        <Button size="small" variant="secondary" onClick={openPicker}>Choose friends</Button>
-                        <Paragraph>{selectedCount} selected</Paragraph>
+                    <Flex flexDirection="column" gap="4px">
+                        <Flex alignItems="center" gap="8px">
+                            <Button size="small" variant="secondary" onClick={openPicker}>Choose friends</Button>
+                            <Paragraph>{selectedCount} selected</Paragraph>
+                        </Flex>
+                        {selectedCount === 0 && (
+                            <Paragraph style={{ color: "var(--text-muted)", fontSize: 12 }}>Switch on at least one friend, or Tether will stay quiet until you do.</Paragraph>
+                        )}
                     </Flex>
                 )}
 

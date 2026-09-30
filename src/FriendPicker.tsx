@@ -9,7 +9,7 @@ import { Flex } from "@components/Flex";
 import { Paragraph } from "@components/Paragraph";
 import { Switch } from "@components/Switch";
 import { RenderModalProps } from "@vencord/discord-types";
-import { Modal, openModal, TextInput, useState } from "@webpack/common";
+import { Modal, openModal, TextInput, useRef, useState } from "@webpack/common";
 
 import { formatDaysAgo, FriendInfo } from "./engine";
 import { getFriendGroups } from "./friends";
@@ -71,7 +71,10 @@ export function FriendChecklist() {
                             key={friend.id}
                             style={{ display: "flex", alignItems: "center", gap: 12, padding: "8px 0", borderBottom: "1px solid var(--background-modifier-accent)" }}
                         >
-                            <div style={{ flexGrow: 1, minWidth: 0 }}>
+                            <div
+                                onClick={() => setTracked(friend.id, !isWatched(friend.id))}
+                                style={{ flexGrow: 1, minWidth: 0, cursor: "pointer" }}
+                            >
                                 <div>{friend.name}</div>
                                 <div style={{ color: "var(--text-muted)", fontSize: 12 }}>{describeFriend(friend)}</div>
                             </div>
@@ -92,11 +95,11 @@ export function openWhitelistPicker(onClosed?: () => void) {
 }
 
 function WhitelistPickerModal({ modalProps, onClosed }: { modalProps: RenderModalProps; onClosed?: () => void; }) {
-    const [closed, setClosed] = useState(false);
+    const calledClosed = useRef(false);
 
     function close() {
-        if (!closed) {
-            setClosed(true);
+        if (!calledClosed.current) {
+            calledClosed.current = true;
             onClosed?.();
         }
 
@@ -106,6 +109,7 @@ function WhitelistPickerModal({ modalProps, onClosed }: { modalProps: RenderModa
     return (
         <Modal
             {...modalProps}
+            onClose={close}
             title="Choose friends to watch"
             size="md"
             actions={[
@@ -117,7 +121,7 @@ function WhitelistPickerModal({ modalProps, onClosed }: { modalProps: RenderModa
             ]}
         >
             <Flex flexDirection="column" gap="8px">
-                <Paragraph>Tether will only check in about the friends you switch on here.</Paragraph>
+                <Paragraph>Tether will only check in about the friends you switch on here. You can change this later in Tether's settings.</Paragraph>
                 <FriendChecklist />
             </Flex>
         </Modal>

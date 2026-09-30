@@ -7,6 +7,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Changed
+
+- Picking Whitelist in onboarding now opens the friend picker right away, and friends can be switched on by clicking the row as well as the switch.
+
+### Fixed
+
+- The friend picker now updates the onboarding count when it is closed with the X or Esc, not only with Done, and onboarding explains when the whitelist is still empty.
+
 ## [0.1.0-beta.4] - 2026-09-30
 
 ### Added
