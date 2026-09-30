@@ -95,11 +95,12 @@ function quoteWindowsArg(arg) {
     return /[\s"]/.test(arg) ? `"${arg.replaceAll('"', '\\"')}"` : arg;
 }
 
-function run(command, commandArgs, cwd) {
+function run(command, commandArgs, cwd, env) {
     const finalArgs = process.platform === "win32" ? commandArgs.map(quoteWindowsArg) : commandArgs;
 
     const result = spawnSync(command, finalArgs, {
         cwd,
+        env: env ? { ...process.env, ...env } : process.env,
         stdio: "inherit",
         shell: process.platform === "win32"
     });
@@ -285,11 +286,12 @@ function buildVencord() {
 
     const pnpm = readPnpmVersion();
     const pnpmArgs = ["--yes", pnpm === "latest" ? "pnpm@latest" : `pnpm@${pnpm}`];
+    const buildEnv = { VENCORD_HASH: "tether", VENCORD_REMOTE: "Vencord/Vencord" };
 
-    run("npx", [...pnpmArgs, "install", "--frozen-lockfile"], VENCORD_DIR);
+    run("npx", [...pnpmArgs, "install", "--frozen-lockfile"], VENCORD_DIR, buildEnv);
 
     console.log("Building Vencord with Tether...");
-    run("npx", [...pnpmArgs, "build"], VENCORD_DIR);
+    run("npx", [...pnpmArgs, "build"], VENCORD_DIR, buildEnv);
 }
 
 function verifyBuild() {
@@ -404,7 +406,7 @@ async function install() {
     console.log("");
     await ensureClosed(target);
     checkTools();
-    syncVencord();
+    await syncVencord();
     copyPlugin();
     buildVencord();
     verifyBuild();
