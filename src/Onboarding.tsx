@@ -14,7 +14,7 @@ import { Modal, openModal, useRef, UserStore, useState } from "@webpack/common";
 
 import { ListMode } from "./engine";
 import { openWhitelistPicker } from "./FriendPicker";
-import { getFriends } from "./friends";
+import { getFriendGroups, getFriends } from "./friends";
 import settings from "./settings";
 import { getState, hasOnboarded, markOnboarded } from "./state";
 
@@ -49,6 +49,7 @@ export async function maybeShowOnboarding() {
 export function OnboardingModal({ modalProps }: { modalProps: RenderModalProps; }) {
     const { listMode } = settings.use(["listMode"]);
     const [friendCount] = useState(() => getFriends().length);
+    const [trackableCount] = useState(() => getFriendGroups().trackable.length);
     const [, refresh] = useState(0);
     const autoOpened = useRef(false);
 
@@ -60,7 +61,7 @@ export function OnboardingModal({ modalProps }: { modalProps: RenderModalProps; 
     function choose(mode: ListMode) {
         settings.store.listMode = mode;
 
-        if (mode === "whitelist" && !autoOpened.current && selectedCount === 0) {
+        if (mode === "whitelist" && !autoOpened.current && selectedCount === 0 && trackableCount > 0) {
             autoOpened.current = true;
             openPicker();
         }
@@ -70,7 +71,7 @@ export function OnboardingModal({ modalProps }: { modalProps: RenderModalProps; 
         openWhitelistPicker(() => refresh(version => version + 1));
     }
 
-    const needsPicker = listMode === "whitelist" && selectedCount === 0;
+    const needsPicker = listMode === "whitelist" && selectedCount === 0 && trackableCount > 0;
 
     return (
         <Modal
@@ -115,17 +116,21 @@ export function OnboardingModal({ modalProps }: { modalProps: RenderModalProps; 
                     onChange={() => choose("old")}
                 />
 
-                {listMode === "whitelist" && (
-                    <Flex flexDirection="column" gap="4px">
-                        <Flex alignItems="center" gap="8px">
-                            <Button size="small" variant="secondary" onClick={openPicker}>Choose friends (Whitelist)</Button>
-                            <Paragraph>{selectedCount} selected</Paragraph>
+                {listMode === "whitelist" && (trackableCount === 0
+                    ? (
+                        <Paragraph style={{ color: "var(--text-muted)", fontSize: 12 }}>No friends are available to choose from right now. Tether will stay quiet until you add friends and pick them in Tether's settings.</Paragraph>
+                    )
+                    : (
+                        <Flex flexDirection="column" gap="4px">
+                            <Flex alignItems="center" gap="8px">
+                                <Button size="small" variant="secondary" onClick={openPicker}>Choose friends (Whitelist)</Button>
+                                <Paragraph>{selectedCount} selected</Paragraph>
+                            </Flex>
+                            {selectedCount === 0 && (
+                                <Paragraph style={{ color: "var(--text-muted)", fontSize: 12 }}>Switch on at least one friend, or Tether will stay quiet until you do.</Paragraph>
+                            )}
                         </Flex>
-                        {selectedCount === 0 && (
-                            <Paragraph style={{ color: "var(--text-muted)", fontSize: 12 }}>Switch on at least one friend, or Tether will stay quiet until you do.</Paragraph>
-                        )}
-                    </Flex>
-                )}
+                    ))}
 
                 <Paragraph>You can untether anyone you would rather not hear about at any time, so the recent and old friends modes never lock you into the whole list.</Paragraph>
 

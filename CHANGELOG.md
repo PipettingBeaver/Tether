@@ -15,6 +15,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Fixed
 
 - The friend picker now updates the onboarding count when it is closed with the X or Esc, not only with Done, and onboarding explains when the whitelist is still empty.
+- Onboarding and the whitelist picker no longer trap users who have no friends to choose from: the picker can always be closed, and onboarding explains that Tether stays quiet until friends are picked.
 
 ## [0.1.0-beta.4] - 2026-09-30
 

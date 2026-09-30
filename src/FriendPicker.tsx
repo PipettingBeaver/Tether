@@ -29,6 +29,7 @@ export function FriendChecklist({ onCountChange }: { onCountChange?: (count: num
     const [search, setSearch] = useState("");
 
     const selectedCount = groups.trackable.filter(friend => isWatched(friend.id)).length;
+    const hasFriends = groups.trackable.length > 0;
 
     useEffect(() => {
         onCountChange?.(selectedCount);
@@ -60,36 +61,48 @@ export function FriendChecklist({ onCountChange }: { onCountChange?: (count: num
     return (
         <Flex flexDirection="column" gap="8px">
             <Flex alignItems="center" gap="8px" flexWrap="wrap">
-                <Paragraph>{selectedCount === 0 ? "Please select at least one friend to continue." : `${selectedCount} friends selected.`}</Paragraph>
-                <Button size="small" variant="secondary" onClick={() => setAll(true)}>Select all</Button>
-                <Button size="small" variant="secondary" onClick={() => setAll(false)}>Clear</Button>
+                <Paragraph>
+                    {!hasFriends
+                        ? "No friends are available to choose from right now. Add friends and pick them here or in Tether's settings."
+                        : selectedCount === 0
+                            ? "Please select at least one friend to continue."
+                            : `${selectedCount} friends selected.`}
+                </Paragraph>
+                {hasFriends && (
+                    <>
+                        <Button size="small" variant="secondary" onClick={() => setAll(true)}>Select all</Button>
+                        <Button size="small" variant="secondary" onClick={() => setAll(false)}>Clear</Button>
+                    </>
+                )}
             </Flex>
 
-            <TextInput value={search} onChange={setSearch} placeholder="Search friends" />
+            {hasFriends && <TextInput value={search} onChange={setSearch} placeholder="Search friends" />}
 
-            <div aria-label="Friends to watch" tabIndex={0} style={{ display: "flex", flexDirection: "column", maxHeight: 280, overflowY: "auto" }}>
-                {visible.length === 0
-                    ? <Paragraph>No friends match that search.</Paragraph>
-                    : visible.map(friend => (
-                        <div
-                            key={friend.id}
-                            style={{ display: "flex", alignItems: "center", gap: 12, padding: "8px 0", borderBottom: "1px solid var(--background-modifier-accent)" }}
-                        >
+            {hasFriends && (
+                <div aria-label="Friends to watch" tabIndex={0} style={{ display: "flex", flexDirection: "column", maxHeight: 280, overflowY: "auto" }}>
+                    {visible.length === 0
+                        ? <Paragraph>No friends match that search.</Paragraph>
+                        : visible.map(friend => (
                             <div
-                                onClick={() => setTracked(friend.id, !isWatched(friend.id))}
-                                style={{ flexGrow: 1, minWidth: 0, cursor: "pointer" }}
+                                key={friend.id}
+                                style={{ display: "flex", alignItems: "center", gap: 12, padding: "8px 0", borderBottom: "1px solid var(--background-modifier-accent)" }}
                             >
-                                <div>{friend.name}</div>
-                                <div style={{ color: "var(--text-muted)", fontSize: 12 }}>{describeFriend(friend)}</div>
+                                <div
+                                    onClick={() => setTracked(friend.id, !isWatched(friend.id))}
+                                    style={{ flexGrow: 1, minWidth: 0, cursor: "pointer" }}
+                                >
+                                    <div>{friend.name}</div>
+                                    <div style={{ color: "var(--text-muted)", fontSize: 12 }}>{describeFriend(friend)}</div>
+                                </div>
+                                <Switch
+                                    aria-label={`Watch ${friend.name}`}
+                                    checked={isWatched(friend.id)}
+                                    onChange={tracked => setTracked(friend.id, tracked)}
+                                />
                             </div>
-                            <Switch
-                                aria-label={`Watch ${friend.name}`}
-                                checked={isWatched(friend.id)}
-                                onChange={tracked => setTracked(friend.id, tracked)}
-                            />
-                        </div>
-                    ))}
-            </div>
+                        ))}
+                </div>
+            )}
         </Flex>
     );
 }
@@ -101,6 +114,8 @@ export function openWhitelistPicker(onClosed?: () => void) {
 function WhitelistPickerModal({ modalProps, onClosed }: { modalProps: RenderModalProps; onClosed?: () => void; }) {
     const calledClosed = useRef(false);
     const [count, setCount] = useState(0);
+    const [groups] = useState(getFriendGroups);
+    const hasFriends = groups.trackable.length > 0;
 
     function close() {
         if (!calledClosed.current) {
@@ -119,9 +134,9 @@ function WhitelistPickerModal({ modalProps, onClosed }: { modalProps: RenderModa
             size="md"
             actions={[
                 {
-                    text: "Done",
+                    text: hasFriends ? "Done" : "Close",
                     variant: "primary",
-                    disabled: count === 0,
+                    disabled: hasFriends && count === 0,
                     onClick: close
                 }
             ]}
