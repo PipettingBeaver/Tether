@@ -5,6 +5,7 @@
  */
 
 import { Button } from "@components/Button";
+import ErrorBoundary from "@components/ErrorBoundary";
 import { Flex } from "@components/Flex";
 import { Paragraph } from "@components/Paragraph";
 import { Switch } from "@components/Switch";
@@ -108,7 +109,11 @@ export function FriendChecklist({ onCountChange }: { onCountChange?: (count: num
 }
 
 export function openWhitelistPicker(onClosed?: () => void) {
-    openModal(props => <WhitelistPickerModal modalProps={props} onClosed={onClosed} />);
+    openModal(props => (
+        <ErrorBoundary>
+            <WhitelistPickerModal modalProps={props} onClosed={onClosed} />
+        </ErrorBoundary>
+    ));
 }
 
 function WhitelistPickerModal({ modalProps, onClosed }: { modalProps: RenderModalProps; onClosed?: () => void; }) {

@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.1.0-beta.5] - 2026-09-30
+
 ### Changed
 
 - Picking Whitelist in onboarding now opens the friend picker right away, and friends can be switched on by clicking the row as well as the switch.
@@ -59,7 +61,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Timestamps only, never message contents. Everything is stored locally, per account.
 - Windows, macOS, and Linux installers, and a browser userscript.
 
-[unreleased]: https://github.com/PipettingBeaver/Tether/compare/v0.1.0-beta.4...HEAD
+[unreleased]: https://github.com/PipettingBeaver/Tether/compare/v0.1.0-beta.5...HEAD
+[0.1.0-beta.5]: https://github.com/PipettingBeaver/Tether/compare/v0.1.0-beta.4...v0.1.0-beta.5
 [0.1.0-beta.4]: https://github.com/PipettingBeaver/Tether/compare/v0.1.0-beta.3...v0.1.0-beta.4
 [0.1.0-beta.3]: https://github.com/PipettingBeaver/Tether/compare/v0.1.0-beta.2...v0.1.0-beta.3
 [0.1.0-beta.2]: https://github.com/PipettingBeaver/Tether/compare/v0.1.0-beta.1...v0.1.0-beta.2
