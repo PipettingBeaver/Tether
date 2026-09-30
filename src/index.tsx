@@ -4,7 +4,7 @@
  * SPDX-License-Identifier: GPL-3.0-or-later
  */
 
-import { currentNotice, noticesQueue, popNotice, showNotice } from "@api/Notices";
+import { currentNotice, noticesQueue } from "@api/Notices";
 import { showNotification } from "@api/Notifications";
 import { SettingsStore } from "@api/Settings";
 import { Logger } from "@utils/Logger";
@@ -18,6 +18,7 @@ import { markChannelSelected, openConversation, recordMessage, rememberLoadedCha
 import { countNudgedToday, formatDaysAgo, getOverdueFriends, HOUR_MS, MINUTE_MS, mostRecentNudgeAt } from "./engine";
 import { getFriends } from "./friends";
 import { openTether, openTetherModal } from "./modal";
+import { showTetherNotice } from "./notices";
 import { maybeShowOnboarding } from "./Onboarding";
 import settings from "./settings";
 import { ensureStateLoaded, getState, patchFriendState, saveState } from "./state";
@@ -76,9 +77,8 @@ async function check() {
         });
 
         if (settings.store.inAppNotice && !currentNotice && noticesQueue.length === 0) {
-            showNotice(`${title} ${body}`, "Review", () => {
+            showTetherNotice(most.id, `${title} ${body}`, () => {
                 try {
-                    popNotice();
                     openTetherModal(most.id);
                 } catch (error) {
                     logger.error("Could not open the Tether window", error);

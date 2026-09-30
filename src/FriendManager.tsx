@@ -15,6 +15,7 @@ import { getBackfillQueueSize, runBackfillStep } from "./backfill";
 import { getDMSyncStatus, openConversation, rememberLoadedChannels, syncDMTimes } from "./dmTimes";
 import { countNudgedToday, DAY_MS, formatDaysAgo, FriendInfo, FriendState, HOUR_MS, isTracked, ListMode, MINUTE_MS, mostRecentNudgeAt } from "./engine";
 import { ExcludedFriend, getFriendGroups } from "./friends";
+import { dismissTetherNotice } from "./notices";
 import { getState, patchFriendState, saveState } from "./state";
 
 function isChecked(state: FriendState | undefined, mode: ListMode) {
@@ -74,6 +75,7 @@ export default function FriendManager() {
 
     function setTracked(id: string, tracked: boolean) {
         patchFriendState(id, tracked ? { tracked: true, muted: false, forgotten: false } : { tracked: false });
+        if (!tracked) dismissTetherNotice(id);
         void saveState();
         setVersion(version => version + 1);
     }

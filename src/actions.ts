@@ -5,6 +5,7 @@
  */
 
 import { DAY_MS, FriendInfo } from "./engine";
+import { dismissTetherNotice } from "./notices";
 import settings from "./settings";
 import { patchFriendState, saveState } from "./state";
 
@@ -26,6 +27,7 @@ export function delayFriend(friend: FriendInfo) {
 export function untetherFriend(friend: FriendInfo) {
     patchFriendState(friend.id, { muted: true });
     void saveState();
+    dismissTetherNotice(friend.id);
 }
 
 export function retetherFriend(id: string) {
@@ -36,4 +38,5 @@ export function retetherFriend(id: string) {
 export function forgetFriend(id: string) {
     patchFriendState(id, { muted: true, forgotten: true });
     void saveState();
+    dismissTetherNotice(id);
 }
