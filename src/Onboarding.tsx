@@ -4,6 +4,7 @@
  * SPDX-License-Identifier: GPL-3.0-or-later
  */
 
+import { Button } from "@components/Button";
 import ErrorBoundary from "@components/ErrorBoundary";
 import { Flex } from "@components/Flex";
 import { Paragraph } from "@components/Paragraph";
@@ -12,9 +13,10 @@ import { RenderModalProps } from "@vencord/discord-types";
 import { Modal, openModal, UserStore, useState } from "@webpack/common";
 
 import { ListMode } from "./engine";
+import { openWhitelistPicker } from "./FriendPicker";
 import { getFriends } from "./friends";
 import settings from "./settings";
-import { hasOnboarded, markOnboarded } from "./state";
+import { getState, hasOnboarded, markOnboarded } from "./state";
 
 function SwitchRow({ title, description, checked, onChange }: { title: string; description: string; checked: boolean; onChange: () => void; }) {
     return (
@@ -47,10 +49,22 @@ export async function maybeShowOnboarding() {
 export function OnboardingModal({ modalProps }: { modalProps: RenderModalProps; }) {
     const { listMode } = settings.use(["listMode"]);
     const [friendCount] = useState(() => getFriends().length);
+    const [, refresh] = useState(0);
+
+    const selectedCount = getFriends().filter(friend => {
+        const state = getState()[friend.id];
+        return state?.tracked === true && !state.muted;
+    }).length;
 
     function choose(mode: ListMode) {
         settings.store.listMode = mode;
     }
+
+    function openPicker() {
+        openWhitelistPicker(() => refresh(version => version + 1));
+    }
+
+    const needsPicker = listMode === "whitelist" && selectedCount === 0;
 
     return (
         <Modal
@@ -59,9 +73,16 @@ export function OnboardingModal({ modalProps }: { modalProps: RenderModalProps; 
             size="md"
             actions={[
                 {
-                    text: "Start Tether",
+                    text: needsPicker ? "Choose friends" : "Start Tether",
                     variant: "primary",
-                    onClick: () => modalProps.onClose()
+                    onClick: () => {
+                        if (needsPicker) {
+                            openPicker();
+                            return;
+                        }
+
+                        modalProps.onClose();
+                    }
                 }
             ]}
         >
@@ -87,6 +108,13 @@ export function OnboardingModal({ modalProps }: { modalProps: RenderModalProps; 
                     checked={listMode === "old"}
                     onChange={() => choose("old")}
                 />
+
+                {listMode === "whitelist" && (
+                    <Flex alignItems="center" gap="8px">
+                        <Button size="small" variant="secondary" onClick={openPicker}>Choose friends</Button>
+                        <Paragraph>{selectedCount} selected</Paragraph>
+                    </Flex>
+                )}
 
                 {friendCount > 0 && (
                     <Paragraph>You have {friendCount} {friendCount === 1 ? "friend" : "friends"} on Discord.</Paragraph>

@@ -34,6 +34,9 @@ flowchart LR
 
     onboarding["Onboarding.tsx<br/>first-run modal"] --> state
     onboarding --> settings
+    onboarding --> friendPicker["FriendPicker.tsx<br/>whitelist picker modal"]
+    friendPicker --> friends
+    friendPicker --> state
 
     state --> engine
 ```
@@ -119,7 +122,7 @@ sequenceDiagram
 | --- | --- | --- |
 | `tether-state-<userId>` | per account | notBefore, muted, forgotten, tracked, lastNudgedAt, seenAt, checkedAt, attemptedAt |
 | `tether-dm-times-v2-<userId>` | per account | remoteFetchedAt and known last message timestamps |
-| `tether-onboarded-v4-<userId>` | per account | one-time onboarding flag |
+| `tether-onboarded-v5-<userId>` | per account | one-time onboarding flag |
 
 ## Runtime caches, not persisted
 

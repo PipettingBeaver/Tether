@@ -83,7 +83,7 @@ Checklist:
 - Does the knot button appear in the chat bar, and does `/tether` open the list?
 - Do browser notifications work, and does clicking the toast open the person's chat?
 - Does the backfill progress number climb over time?
-- Does the untethered list, the onboarding modal, and the settings page all look right?
+- Does the untethered list, the onboarding modal (including picking whitelist friends), and the settings page all look right?
 
 Caveats to pass along: browser storage is separate from the desktop app, there is no auto updater, so reinstalling after each rebuild is required, and if Tether is toggled off and back on, the tab may need a reload before the chat button reappears.
 
