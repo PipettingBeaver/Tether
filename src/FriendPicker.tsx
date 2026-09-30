@@ -9,7 +9,7 @@ import { Flex } from "@components/Flex";
 import { Paragraph } from "@components/Paragraph";
 import { Switch } from "@components/Switch";
 import { RenderModalProps } from "@vencord/discord-types";
-import { Modal, openModal, TextInput, useRef, useState } from "@webpack/common";
+import { Modal, openModal, TextInput, useEffect, useRef, useState } from "@webpack/common";
 
 import { formatDaysAgo, FriendInfo } from "./engine";
 import { getFriendGroups } from "./friends";
@@ -23,12 +23,16 @@ function describeFriend(friend: FriendInfo) {
     return `Last message ${formatDaysAgo(friend.lastMessageAt)}`;
 }
 
-export function FriendChecklist() {
+export function FriendChecklist({ onCountChange }: { onCountChange?: (count: number) => void; }) {
     const [groups] = useState(getFriendGroups);
     const [, setVersion] = useState(0);
     const [search, setSearch] = useState("");
 
     const selectedCount = groups.trackable.filter(friend => isWatched(friend.id)).length;
+
+    useEffect(() => {
+        onCountChange?.(selectedCount);
+    }, [selectedCount, onCountChange]);
 
     function isWatched(id: string) {
         const state = getState()[id];
@@ -56,7 +60,7 @@ export function FriendChecklist() {
     return (
         <Flex flexDirection="column" gap="8px">
             <Flex alignItems="center" gap="8px" flexWrap="wrap">
-                <Paragraph>{selectedCount} friends selected.</Paragraph>
+                <Paragraph>{selectedCount === 0 ? "Please select at least one friend to continue." : `${selectedCount} friends selected.`}</Paragraph>
                 <Button size="small" variant="secondary" onClick={() => setAll(true)}>Select all</Button>
                 <Button size="small" variant="secondary" onClick={() => setAll(false)}>Clear</Button>
             </Flex>
@@ -96,6 +100,7 @@ export function openWhitelistPicker(onClosed?: () => void) {
 
 function WhitelistPickerModal({ modalProps, onClosed }: { modalProps: RenderModalProps; onClosed?: () => void; }) {
     const calledClosed = useRef(false);
+    const [count, setCount] = useState(0);
 
     function close() {
         if (!calledClosed.current) {
@@ -116,13 +121,14 @@ function WhitelistPickerModal({ modalProps, onClosed }: { modalProps: RenderModa
                 {
                     text: "Done",
                     variant: "primary",
+                    disabled: count === 0,
                     onClick: close
                 }
             ]}
         >
             <Flex flexDirection="column" gap="8px">
                 <Paragraph>Tether will only check in about the friends you switch on here. You can change this later in Tether's settings.</Paragraph>
-                <FriendChecklist />
+                <FriendChecklist onCountChange={setCount} />
             </Flex>
         </Modal>
     );

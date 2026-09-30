@@ -79,7 +79,7 @@ export function OnboardingModal({ modalProps }: { modalProps: RenderModalProps; 
             size="md"
             actions={[
                 {
-                    text: needsPicker ? "Choose friends" : "Start Tether",
+                    text: needsPicker ? "Choose friends (Whitelist)" : "Start Tether",
                     variant: "primary",
                     onClick: () => {
                         if (needsPicker) {
@@ -118,7 +118,7 @@ export function OnboardingModal({ modalProps }: { modalProps: RenderModalProps; 
                 {listMode === "whitelist" && (
                     <Flex flexDirection="column" gap="4px">
                         <Flex alignItems="center" gap="8px">
-                            <Button size="small" variant="secondary" onClick={openPicker}>Choose friends</Button>
+                            <Button size="small" variant="secondary" onClick={openPicker}>Choose friends (Whitelist)</Button>
                             <Paragraph>{selectedCount} selected</Paragraph>
                         </Flex>
                         {selectedCount === 0 && (
@@ -126,6 +126,8 @@ export function OnboardingModal({ modalProps }: { modalProps: RenderModalProps; 
                         )}
                     </Flex>
                 )}
+
+                <Paragraph>You can untether anyone you would rather not hear about at any time, so the recent and old friends modes never lock you into the whole list.</Paragraph>
 
                 {friendCount > 0 && (
                     <Paragraph>You have {friendCount} {friendCount === 1 ? "friend" : "friends"} on Discord.</Paragraph>

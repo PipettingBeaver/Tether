@@ -10,6 +10,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Changed
 
 - Picking Whitelist in onboarding now opens the friend picker right away, and friends can be switched on by clicking the row as well as the switch.
+- The onboarding button now reads "Choose friends (Whitelist)", the picker asks for at least one friend and keeps Done disabled until one is chosen, and onboarding explains that untethering keeps the automatic modes from locking you into the whole list.
 
 ### Fixed
 
