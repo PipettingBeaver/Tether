@@ -55,6 +55,16 @@ let remoteFetchedAt = 0;
 let lastSyncCount: number | null = null;
 let lastError: string | null = null;
 
+export function resetRuntimeCaches() {
+    baseTimes = new Map();
+    channelUsers.clear();
+    protectedChannels.clear();
+    recentSelections.clear();
+    remoteFetchedAt = 0;
+    lastSyncCount = null;
+    lastError = null;
+}
+
 function cacheKey() {
     const userId = UserStore.getCurrentUser()?.id ?? "unknown";
     return `tether-dm-times-v2-${userId}`;

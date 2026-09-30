@@ -164,7 +164,7 @@ export function TetherModal({ modalProps, focusId }: { modalProps: RenderModalPr
                 {muted.length > 0 && (
                     <Flex flexDirection="column" gap="12px">
                         <Paragraph>Untethered friends stay quiet until you tether them again.</Paragraph>
-                        <div style={{ display: "flex", flexDirection: "column", gap: 8, maxHeight: 128, overflowY: "auto" }}>
+                        <div aria-label="Untethered friends" tabIndex={0} style={{ display: "flex", flexDirection: "column", gap: 8, maxHeight: 128, overflowY: "auto" }}>
                             {muted.map(friend => (
                                 <Flex key={friend.id} alignItems="center" gap="12px" flexWrap="wrap">
                                     <FriendDetails friend={friend} />

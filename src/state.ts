@@ -7,6 +7,7 @@
 import * as DataStore from "@api/DataStore";
 import { UserStore } from "@webpack/common";
 
+import { resetRuntimeCaches } from "./dmTimes";
 import { FriendState, TetherState } from "./engine";
 
 let state: TetherState = {};
@@ -37,6 +38,7 @@ export async function loadState() {
     await pendingSave.catch(() => void 0);
 
     const userId = currentUserId();
+    if (loadedUser !== undefined && loadedUser !== userId) resetRuntimeCaches();
     state = await DataStore.get<TetherState>(stateKey(userId)) ?? {};
     loadedUser = userId;
 }

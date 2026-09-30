@@ -60,7 +60,7 @@ Discord only shares your most recent conversations with any plugin via API calls
 
 ## Questions
 
-- **Is Tether safe?** Tether doesn't do anything with your data! Tether sends API calls from your machine, to your machine, to read your friend list and when each conversation was last active. It never reads message contents. API calls happen intermittently to avoid bot warnings.
+- **Is Tether safe?** Tether doesn't do anything with your data! Tether sends API calls from your machine, to your machine, to read your friend list and when each conversation was last active. It never reads message contents. API calls happen intermittently to avoid bot warnings. Everything it remembers (friend ids and last-message timestamps, never message text) is stored locally in Discord's own storage on your machine, and nothing is sent anywhere except Discord's own API.
 
 - **What do I do if I found a bug?** Please reach out to me (either Github or on Discord) with a bug report! Use `ctrl+shift+i` to bring up the Console, and please send contents of the "Tether" related warning messages.
 
@@ -68,9 +68,11 @@ Discord only shares your most recent conversations with any plugin via API calls
 
 - **Is Tether official?** No. Tether and Vencord are both unofficial modifications of Discord. As for Vencord, Tether ships with an *unofficial* Vencord build made for Tether, and it is NOT supported by the Vencord team.
 
-- **How do I remove Tether?** Run the same launcher and choose uninstall, or remove the userscript from your manager.
+- **Does Tether break Discord's rules?** Client mods are not officially supported by Discord, so any client mod is used at the user's own risk. Tether adds no automation and never messages anyone for you; it only reads the timestamps Discord already shows you and reminds you to reach out.
 
-- **Is this open-source?** Everything is in this repository, under GPL-3.0-or-later.
+- **How do I remove Tether?** Run the same launcher and choose uninstall, or remove the userscript from your manager. Tether's local memory lives in Discord's own client storage and can also be cleared through Discord's clear-data options.
+
+- **Is this open-source?** Everything is in this repository, under GPL-3.0-or-later. The installers and the userscript bundle an unofficial build of Vencord, which is also GPL-3.0-or-later; the build scripts here show the exact changes, and Vencord's source lives at [github.com/Vencord/Vencord](https://github.com/Vencord/Vencord).
 
 ## For curious developers
 

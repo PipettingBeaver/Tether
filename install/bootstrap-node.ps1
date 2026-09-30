@@ -11,6 +11,16 @@ $dest = Join-Path $env:LOCALAPPDATA "Tether\node"
 Write-Host "Downloading Node.js $version..."
 Invoke-WebRequest -Uri "https://nodejs.org/dist/$version/$zipName" -OutFile $zipPath
 
+$sums = Invoke-RestMethod "https://nodejs.org/dist/$version/SHASUMS256.txt"
+$sumLine = ($sums -split "`n") | Where-Object { $_ -match [regex]::Escape($zipName) } | Select-Object -First 1
+$expected = if ($sumLine) { ($sumLine -split "\s+")[0].Trim().ToLower() } else { "" }
+$actual = (Get-FileHash -Path $zipPath -Algorithm SHA256).Hash.ToLower()
+
+if ($expected -eq "" -or $actual -ne $expected) {
+    Remove-Item $zipPath -Force
+    throw "The Node.js download did not match its published checksum. Please try again."
+}
+
 if (Test-Path $extractRoot) { Remove-Item $extractRoot -Recurse -Force }
 Expand-Archive -Path $zipPath -DestinationPath $extractRoot -Force
 

@@ -28,10 +28,12 @@ export function FriendChecklist() {
     const [, setVersion] = useState(0);
     const [search, setSearch] = useState("");
 
-    const selectedCount = groups.trackable.filter(friend => {
-        const state = getState()[friend.id];
+    const selectedCount = groups.trackable.filter(friend => isWatched(friend.id)).length;
+
+    function isWatched(id: string) {
+        const state = getState()[id];
         return state?.tracked === true && !state.muted;
-    }).length;
+    }
 
     function setTracked(id: string, tracked: boolean) {
         patchFriendState(id, tracked ? { tracked: true, muted: false, forgotten: false } : { tracked: false });
@@ -61,7 +63,7 @@ export function FriendChecklist() {
 
             <TextInput value={search} onChange={setSearch} placeholder="Search friends" />
 
-            <div style={{ display: "flex", flexDirection: "column", maxHeight: 280, overflowY: "auto" }}>
+            <div aria-label="Friends to watch" tabIndex={0} style={{ display: "flex", flexDirection: "column", maxHeight: 280, overflowY: "auto" }}>
                 {visible.length === 0
                     ? <Paragraph>No friends match that search.</Paragraph>
                     : visible.map(friend => (
@@ -74,7 +76,8 @@ export function FriendChecklist() {
                                 <div style={{ color: "var(--text-muted)", fontSize: 12 }}>{describeFriend(friend)}</div>
                             </div>
                             <Switch
-                                checked={getState()[friend.id]?.tracked === true && !getState()[friend.id]?.muted}
+                                aria-label={`Watch ${friend.name}`}
+                                checked={isWatched(friend.id)}
                                 onChange={tracked => setTracked(friend.id, tracked)}
                             />
                         </div>

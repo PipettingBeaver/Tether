@@ -127,7 +127,7 @@ export default function FriendManager() {
 
             <TextInput value={search} onChange={setSearch} placeholder="Search friends" />
 
-            <div style={{ maxHeight: 320, overflowY: "auto", margin: "8px 0" }}>
+            <div aria-label="Tether friend list" tabIndex={0} style={{ maxHeight: 320, overflowY: "auto", margin: "8px 0" }}>
                 {visible.length === 0
                     ? <Paragraph>No friends match that search.</Paragraph>
                     : visible.map(friend => (
@@ -143,6 +143,7 @@ export default function FriendManager() {
                                 <Button size="small" variant="secondary" onClick={() => openConversation(friend)}>Open</Button>
                             )}
                             <Switch
+                                aria-label={`Watch ${friend.name}`}
                                 checked={isChecked(getState()[friend.id], mode)}
                                 onChange={tracked => setTracked(friend.id, tracked)}
                             />

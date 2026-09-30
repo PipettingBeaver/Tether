@@ -1,13 +1,13 @@
 # Tether release review
 
-Last updated 2026-09-28. Covers accessibility, lifecycle and memory, edge cases, and the path to a public GitHub release and a Vencord pull request.
+Last updated 2026-09-30. Covers accessibility, lifecycle and memory, edge cases, and the path to a public GitHub release and a Vencord pull request.
 
 ## Health summary
 
 - Strict TypeScript, ESLint clean, 18 unit tests on the pure engine, no runtime dependencies, no DOM manipulation, no hardcoded colors.
 - Clean separation: `engine.ts` is pure, `state.ts` owns persistence, `dmTimes.ts` owns Discord reads, UI modules are thin.
 - Timers and listeners are paired: every `setInterval`, `setTimeout`, and settings listener created in `start()` is cleared in `stop()`.
-- The two known rough edges are documented below: accessible names on the friend rows, and runtime caches not being cleared on account switch.
+- The previously noted rough edges (accessible names on the friend rows, scroll region labels, and runtime caches on account switch) were fixed on 2026-09-30. See the notes in each section.
 
 ## Memory and lifecycle audit
 
@@ -20,11 +20,11 @@ Last updated 2026-09-28. Covers accessibility, lifecycle and memory, edge cases,
 | `useSettings()` in the friend manager | FriendManager | subscription cleaned by the hook |
 | `pendingSave` promise chain | state | single chain, resolves and is replaced, no growth |
 | `baseTimes` | dmTimes | per account, bounded by friend count |
-| `channelUsers` | dmTimes | grows with observed conversations, not cleared on account switch (finding) |
-| `protectedChannels` | dmTimes | grows with Tether-opened chats, not cleared on account switch (finding) |
+| `channelUsers` | dmTimes | per account, cleared on account switch since 2026-09-30 |
+| `protectedChannels` | dmTimes | per account, cleared on account switch since 2026-09-30 |
 | Notification and notice queues | Vencord | shared, bounded, we only push when the notice queue is empty |
 
-Finding: `channelUsers` and `protectedChannels` are process-wide, while state and the timestamp cache are per account. Channel ids are globally unique so cross-account collisions are not realistic, but the intended behavior is to reset both when the active account changes. Recommended fix: export `resetRuntimeCaches()` from `dmTimes.ts` and call it from `ensureStateLoaded()` when the user id changes.
+Finding fixed 2026-09-30: `channelUsers`, `protectedChannels`, and the rest of the runtime caches are process-wide, while state and the timestamp cache are per account. `resetRuntimeCaches()` is exported from `dmTimes.ts` and called by `loadState()` whenever the active user id changes.
 
 ## Edge cases
 
@@ -57,12 +57,12 @@ What is already good:
 - Colors come exclusively from Discord CSS variables (`--text-muted`, `--text-link`, `--background-modifier-accent`), so themes and contrast settings apply automatically.
 - No custom animation, so no reduced motion concerns.
 
-What to fix before release:
+Fixed 2026-09-30:
 
-1. Friend rows: the toggle is a bare checkbox with no accessible name because the row is no longer a `FormSwitch` label. Add `aria-label={friend.name}` to the `Switch`, or wrap the row text and switch in a `label`.
-2. Toast actions: the three actions are `span role="button" tabIndex={0}` with mouse handlers only. Add `onKeyDown` for Enter and Space, and keep the visible text as the label.
-3. Scroll regions: the friend list and the untethered list are scrollable `div`s. Add an `aria-label` and `tabIndex={0}` so keyboard users can scroll them.
-4. Status lines: they are long sentences read as a block. Acceptable, but consider splitting the two status paragraphs into a list for screen readers if you want to go further.
+1. Friend rows: the `Switch` in the settings list and in the whitelist picker now has `aria-label="Watch <name>"`.
+2. Toast actions: no longer applicable. The toast was reduced to a single button (opens the friend's chat), so the custom `span role="button"` actions were removed entirely.
+3. Scroll regions: the friend list, the whitelist picker list, and the untethered list now have an `aria-label` and `tabIndex={0}`.
+4. Status lines: left as prose, still acceptable.
 
 ## Theme and visual consistency
 
@@ -96,8 +96,10 @@ What to fix before release:
 
 ## Prioritized fixes
 
-1. Clear runtime caches on account switch (`dmTimes`).
-2. Accessible names and keyboard activation for friend rows and toast actions.
-3. `aria-label` and keyboard focus for the two scroll regions.
-4. Exclude local dev tooling from the public repo or document it.
-5. Decide the upstream backfill default (0 versus 30 per hour).
+All applied as of 2026-09-30, except the upstream decision:
+
+1. Clear runtime caches on account switch (`dmTimes`). Done.
+2. Accessible names and keyboard activation for friend rows and toast actions. Done (toast actions removed).
+3. `aria-label` and keyboard focus for the scroll regions. Done.
+4. Exclude local dev tooling from the public repo or document it. Done, tooling lives in `tools/`.
+5. Decide the upstream backfill default (0 versus 30 per hour). Still open, only relevant to a Vencord pull request.
