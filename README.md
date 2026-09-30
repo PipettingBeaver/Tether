@@ -1,4 +1,4 @@
-# Tether
+# Tether - Discord plugin for Staying in Touch
 
 > **The current version is for testing only! Please reach out to me (Tan) for support if you're trying it!**
 
