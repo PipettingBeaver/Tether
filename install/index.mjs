@@ -6,7 +6,7 @@
  */
 
 import { spawnSync } from "node:child_process";
-import { cpSync, existsSync, mkdirSync, readFileSync, rmSync, writeFileSync } from "node:fs";
+import { cpSync, existsSync, mkdirSync, readdirSync, readFileSync, renameSync, rmSync, writeFileSync } from "node:fs";
 import { homedir } from "node:os";
 import { basename, dirname, join, resolve } from "node:path";
 import { createInterface } from "node:readline";
@@ -235,11 +235,29 @@ async function syncVencord() {
     const archive = join(DATA_DIR, "vencord.tar.gz");
     writeFileSync(archive, Buffer.from(await response.arrayBuffer()));
 
+    const extractDir = join(DATA_DIR, "vencord-extract");
+    rmSync(extractDir, { recursive: true, force: true });
+    mkdirSync(extractDir, { recursive: true });
+
+    console.log("Extracting Vencord...");
+    run("tar", ["-xzf", archive], extractDir);
+
+    const [top] = readdirSync(extractDir, { withFileTypes: true }).filter(entry => entry.isDirectory());
+    if (!top) throw new Error("The Vencord archive was empty. Try running the installer again");
+
     rmSync(VENCORD_DIR, { recursive: true, force: true });
     mkdirSync(VENCORD_DIR, { recursive: true });
 
-    run("tar", ["-xzf", archive, "-C", VENCORD_DIR, "--strip-components=1"]);
+    for (const entry of readdirSync(join(extractDir, top.name))) {
+        renameSync(join(extractDir, top.name, entry), join(VENCORD_DIR, entry));
+    }
+
+    rmSync(extractDir, { recursive: true, force: true });
     rmSync(archive, { force: true });
+
+    if (!existsSync(join(VENCORD_DIR, "package.json")) || !existsSync(join(VENCORD_DIR, "pnpm-lock.yaml"))) {
+        throw new Error("Vencord did not extract correctly. Try running the installer again");
+    }
 }
 
 function copyPlugin() {
