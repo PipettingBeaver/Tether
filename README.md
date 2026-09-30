@@ -23,14 +23,14 @@ In the plugin list for Vencord, this is how Tether appears:
 
 ## b) macOS
 
-1. Download `Tether-Testing-macOS.tar.gz` from the Releases page.
+1. Download `Tether-Testing-macOS.tar.gz` from the [Releases page](https://github.com/PipettingBeaver/Tether/releases).
 2. Quit Discord, Vencord, or Vesktop completely.
 3. Extract it, then double click "Mac - Start Here.command". If macOS blocks it, right click the file, choose Open, then Open again.
 4. Node.js 20 or newer is required. The launcher points you to it if it is missing.
 
 ## c) Linux
 
-1. Download `Tether-Testing-Linux.tar.gz` from the Releases page.
+1. Download `Tether-Testing-Linux.tar.gz` from the [Releases page](https://github.com/PipettingBeaver/Tether/releases).
 2. Quit Discord, Vencord, or Vesktop completely.
 3. Extract it, then run `bash "Linux - Start Here.sh"`, or right click the file and choose Run in Terminal.
 
@@ -61,7 +61,7 @@ Discord only shares your most recent conversations with any plugin via API calls
 ## Questions
 
 - **Is Tether safe?** Tether doesn't do anything with your data! Tether sends API calls from your machine, to your machine, to read your friend list and when each conversation was last active. It never reads message contents. API calls happen intermittently to avoid bot warnings.
-- 
+
 - **What do I do if I found a bug?** Please reach out to me (either Github or on Discord) with a bug report! Use `ctrl+shift+i` to bring up the Console, and please send contents of the "Tether" related warning messages.
 
 - **Why does it install / require Vencord?** Tether is a written as a plugin for Vencord, a client and framework mod of Discord, so it ships inside a Vencord build. You do not need to install Vencord yourself.
