@@ -42,6 +42,16 @@ In the plugin list for Vencord, this is how Tether appears:
 3. Install the userscript from [this link](https://github.com/PipettingBeaver/Tether/releases/latest/download/Vencord-with-Tether.user.js), or paste the link into your manager's install-from-URL feature:
 4. Reload the Discord tab. Tether is on by default.
 
+## e) Already build Vencord from source (advanced)
+
+If you already build Vencord from source, you can add Tether to your own build instead of using the launchers above. Tether expects a recent Vencord, so pull and rebuild first if your checkout is old.
+
+1. Download this repository (green Code button, then Download ZIP) or clone it.
+2. Copy the `src` folder into your Vencord at `src/userplugins/tether`, so the plugin lives at `src/userplugins/tether/index.tsx`.
+3. Build as usual with `pnpm build`. Then run `pnpm inject` if you use Vencord-injected Discord, or point Vesktop's Vencord location setting at your build's `dist` folder. For your own browser build, `pnpm buildWeb` includes Tether the same way.
+
+Custom plugins are aimed at advanced users and are not supported by the Vencord team, so the usual caution applies: <https://docs.vencord.dev/installing/custom-plugins/>
+
 After a big Discord update, rerun the launcher (or reinstall the userscript) if something stops working. Discord ships new code often and the add-on may have to be rebuilt against it.
 
 ## Using Tether
