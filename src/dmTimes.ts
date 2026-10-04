@@ -9,11 +9,12 @@ import { Logger } from "@utils/Logger";
 import { Channel } from "@vencord/discord-types";
 import { ChannelActionCreators, ChannelRouter, ChannelStore, RestAPI, SelectedChannelStore, SnowflakeUtils, Toasts, UserStore } from "@webpack/common";
 
-import { FriendInfo, HOUR_MS } from "./engine";
+import { FriendInfo, HOUR_MS, MINUTE_MS } from "./engine";
 
 const logger = new Logger("Tether");
 const CACHE_TTL_MS = 6 * HOUR_MS;
 const FORCE_MIN_INTERVAL_MS = 60_000;
+const REFRESH_COOLDOWN_MS = 5 * MINUTE_MS;
 const USER_CHANNELS_ENDPOINT = "/users/@me/channels";
 const DM_CHANNEL_TYPE = 1;
 
@@ -28,6 +29,12 @@ interface RawDMChannel {
 interface DMTimesCache {
     fetchedAt: number;
     times: Record<string, number>;
+    authors?: Record<string, LastAuthor>;
+}
+
+interface LastAuthor {
+    timestamp: number;
+    fromSelf: boolean;
 }
 
 interface ChannelStoreLike {
@@ -47,9 +54,11 @@ export interface DMSyncStatus {
 }
 
 let baseTimes = new Map<string, number>();
+let lastAuthors = new Map<string, LastAuthor>();
 const channelUsers = new Map<string, string>();
 const protectedChannels = new Set<string>();
 const recentSelections = new Map<string, number>();
+const recentRefreshes = new Map<string, number>();
 const SELECTION_GRACE_MS = 120_000;
 let remoteFetchedAt = 0;
 let lastSyncCount: number | null = null;
@@ -57,9 +66,11 @@ let lastError: string | null = null;
 
 export function resetRuntimeCaches() {
     baseTimes = new Map();
+    lastAuthors = new Map();
     channelUsers.clear();
     protectedChannels.clear();
     recentSelections.clear();
+    recentRefreshes.clear();
     remoteFetchedAt = 0;
     lastSyncCount = null;
     lastError = null;
@@ -67,7 +78,7 @@ export function resetRuntimeCaches() {
 
 function cacheKey() {
     const userId = UserStore.getCurrentUser()?.id ?? "unknown";
-    return `tether-dm-times-v2-${userId}`;
+    return `tether-dm-times-v3-${userId}`;
 }
 
 function readId(value: unknown) {
@@ -191,22 +202,41 @@ export function findDirectChannelId(userId: string) {
 }
 
 async function persist() {
-    await DataStore.set(cacheKey(), { fetchedAt: remoteFetchedAt, times: Object.fromEntries(baseTimes) });
+    await DataStore.set(cacheKey(), {
+        fetchedAt: remoteFetchedAt,
+        times: Object.fromEntries(baseTimes),
+        authors: Object.fromEntries(lastAuthors)
+    });
 }
 
-export function recordMessage(channelId: string, messageId: string) {
+export function recordMessage(channelId: string, messageId: string, fromSelf?: boolean) {
     const recipientId = resolveRecipient(channelId);
     if (!recipientId) return;
 
     const timestamp = SnowflakeUtils.extractTimestamp(messageId);
-    if (timestamp <= (baseTimes.get(recipientId) ?? 0)) return;
+    const known = baseTimes.get(recipientId) ?? 0;
+    if (timestamp < known) return;
 
-    baseTimes.set(recipientId, timestamp);
+    if (timestamp > known) baseTimes.set(recipientId, timestamp);
+
+    if (fromSelf === undefined) {
+        if (timestamp > known) lastAuthors.delete(recipientId);
+    } else {
+        lastAuthors.set(recipientId, { timestamp, fromSelf });
+    }
+
     void persist();
 }
 
-export async function refreshConversation(channelId: string) {
+export async function refreshConversation(channelId: string, force = false) {
     if (!resolveRecipient(channelId)) return;
+
+    if (!force) {
+        const last = recentRefreshes.get(channelId) ?? 0;
+        if (Date.now() - last < REFRESH_COOLDOWN_MS) return;
+    }
+
+    recentRefreshes.set(channelId, Date.now());
 
     try {
         const { body } = await RestAPI.get({
@@ -216,10 +246,18 @@ export async function refreshConversation(channelId: string) {
         });
 
         const message = Array.isArray(body) ? body[0] : undefined;
-        if (message?.id) recordMessage(channelId, message.id);
+        if (message?.id) recordMessage(channelId, message.id, message.author?.id === UserStore.getCurrentUser()?.id);
     } catch (error) {
+        recentRefreshes.delete(channelId);
         logger.error("Could not refresh the conversation", error);
     }
+}
+
+export async function refreshConversations(friends: FriendInfo[]) {
+    await Promise.all(friends.map(friend => {
+        const channelId = findDirectChannelId(friend.id);
+        return channelId ? refreshConversation(channelId) : undefined;
+    }));
 }
 
 export async function refreshCurrentConversation() {
@@ -371,6 +409,7 @@ export async function syncDMTimes(force = false) {
     const cached = await DataStore.get<DMTimesCache>(cacheKey());
     if (cached) {
         baseTimes = new Map(Object.entries(cached.times));
+        lastAuthors = new Map(Object.entries(cached.authors ?? {}));
         remoteFetchedAt = cached.fetchedAt;
     }
 
@@ -420,4 +459,8 @@ export function getKnownMessageTimes() {
     const times = new Map(baseTimes);
     overlayLoadedChannels(times);
     return times;
+}
+
+export function getKnownLastAuthors() {
+    return lastAuthors;
 }

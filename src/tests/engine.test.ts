@@ -12,6 +12,7 @@ import { countNudgedToday, DAY_MS, daysSince, EngineSettings, formatDaysAgo, Fri
 const NOW = 1_700_000_000_000;
 const SETTINGS: EngineSettings = {
     thresholdDays: 7,
+    extraDaysAfterMyMessage: 7,
     neverMessagedDays: 14,
     trackNeverMessaged: true,
     dailyCheckIns: 3,
@@ -41,6 +42,23 @@ test("recent friends are not due", () => {
 });
 
 test("friends at or over the threshold are due", () => {
+    assert.equal(isDue(friend("a", NOW - 7 * DAY_MS), undefined, SETTINGS, NOW), true);
+});
+
+test("friends you messaged last wait out the extra delay", () => {
+    const spokenTo = (days: number) => ({ ...friend("a", NOW - days * DAY_MS), lastMessageFromMe: true });
+
+    assert.equal(isDue(spokenTo(10), undefined, SETTINGS, NOW), false);
+    assert.equal(isDue(spokenTo(14), undefined, SETTINGS, NOW), true);
+});
+
+test("friends who messaged last use the normal threshold", () => {
+    const heardFrom = (days: number) => ({ ...friend("a", NOW - days * DAY_MS), lastMessageFromMe: false });
+
+    assert.equal(isDue(heardFrom(7), undefined, SETTINGS, NOW), true);
+});
+
+test("unknown last author falls back to the normal threshold", () => {
     assert.equal(isDue(friend("a", NOW - 7 * DAY_MS), undefined, SETTINGS, NOW), true);
 });
 

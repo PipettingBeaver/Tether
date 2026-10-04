@@ -18,6 +18,7 @@ export interface TrackingSettings {
 
 export interface EngineSettings extends TrackingSettings {
     thresholdDays: number;
+    extraDaysAfterMyMessage: number;
     neverMessagedDays: number;
     trackNeverMessaged: boolean;
     dailyCheckIns: number;
@@ -42,6 +43,7 @@ export interface FriendInfo {
     name: string;
     avatarUrl: string | undefined;
     lastMessageAt: number | null;
+    lastMessageFromMe?: boolean;
     friendsSince: number;
 }
 
@@ -88,7 +90,8 @@ export function isDue(friend: FriendInfo, state: FriendState | undefined, settin
         return now - friend.friendsSince >= settings.neverMessagedDays * DAY_MS;
     }
 
-    return now - friend.lastMessageAt >= settings.thresholdDays * DAY_MS;
+    const extraDays = friend.lastMessageFromMe ? settings.extraDaysAfterMyMessage : 0;
+    return now - friend.lastMessageAt >= (settings.thresholdDays + extraDays) * DAY_MS;
 }
 
 export function countNudgedToday(friends: FriendInfo[], state: TetherState, now: number = Date.now()) {

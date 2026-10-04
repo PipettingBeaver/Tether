@@ -4,15 +4,17 @@
  * SPDX-License-Identifier: GPL-3.0-or-later
  */
 
+import { plugins } from "@api/PluginManager";
 import { Button } from "@components/Button";
 import ErrorBoundary from "@components/ErrorBoundary";
 import { Flex } from "@components/Flex";
 import { Paragraph } from "@components/Paragraph";
+import { openPluginModal } from "@components/settings";
 import { RenderModalProps } from "@vencord/discord-types";
-import { Modal, openModal, useEffect, useState } from "@webpack/common";
+import { Modal, openModal, useEffect, useRef, useState } from "@webpack/common";
 
 import { delayFriend, delayFriends, delayText, forgetFriend, retetherFriend, untetherFriend } from "./actions";
-import { openConversation, refreshCurrentConversation, syncDMTimes } from "./dmTimes";
+import { openConversation, refreshConversations, refreshCurrentConversation, syncDMTimes } from "./dmTimes";
 import { formatDaysAgo, FriendInfo, getOverdueFriends } from "./engine";
 import { getFriends } from "./friends";
 import settings from "./settings";
@@ -43,6 +45,19 @@ function getMuted() {
     });
 }
 
+function getOpenableFriends(focusId?: string) {
+    const overdue = getOverdue();
+    if (!focusId) return overdue;
+
+    const focus = overdue.find(friend => friend.id === focusId) ?? getFriends().find(friend => friend.id === focusId);
+    return focus ? [focus, ...overdue.filter(friend => friend.id !== focus.id)] : overdue;
+}
+
+function openTetherSettings() {
+    const plugin = Object.values(plugins).find(other => other.name === "Tether");
+    if (plugin) openPluginModal(plugin);
+}
+
 function FriendDetails({ friend }: { friend: FriendInfo; }) {
     return (
         <div style={{ display: "flex", alignItems: "center", gap: 12, flex: "1 1 220px", minWidth: 220 }}>
@@ -58,21 +73,23 @@ function FriendDetails({ friend }: { friend: FriendInfo; }) {
 }
 
 export function TetherModal({ modalProps, focusId }: { modalProps: RenderModalProps; focusId?: string; }) {
-    const [all, setAll] = useState(() => {
-        const overdue = getOverdue();
-        if (!focusId) return overdue;
-
-        const focus = overdue.find(friend => friend.id === focusId) ?? getFriends().find(friend => friend.id === focusId);
-        return focus ? [focus, ...overdue.filter(friend => friend.id !== focus.id)] : overdue;
-    });
+    const [all, setAll] = useState(() => getOpenableFriends(focusId));
     const [hiddenIds, setHiddenIds] = useState(() => new Set<string>());
     const [muted, setMuted] = useState(getMuted);
+    const refreshedBatch = useRef(false);
 
     const limit = Math.max(1, settings.store.dailyCheckIns);
     const delay = delayText(settings.store.delayDays);
     const visible = all.filter(friend => !hiddenIds.has(friend.id));
     const batch = visible.slice(0, limit);
     const waiting = Math.max(0, visible.length - limit);
+
+    useEffect(() => {
+        if (refreshedBatch.current) return;
+        refreshedBatch.current = true;
+
+        void refreshConversations(all.slice(0, limit)).then(() => setAll(getOpenableFriends(focusId)));
+    }, [all, limit, focusId]);
 
     useEffect(() => {
         const now = Date.now();
@@ -122,6 +139,14 @@ export function TetherModal({ modalProps, focusId }: { modalProps: RenderModalPr
             title="Tether"
             size="lg"
             actions={[
+                {
+                    text: "Settings",
+                    variant: "secondary",
+                    onClick: () => {
+                        modalProps.onClose();
+                        openTetherSettings();
+                    }
+                },
                 {
                     text: `Delay everyone (${delay})`,
                     variant: "secondary",

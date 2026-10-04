@@ -83,6 +83,11 @@ export default definePluginSettings({
         description: "How many days without a message before Tether checks in",
         default: 7
     },
+    extraDaysAfterMyMessage: {
+        type: OptionType.NUMBER,
+        description: "Extra days to wait when you sent the last message, so Tether does not nudge you right after you reached out. Only knows this for chats it has seen recently",
+        default: 7
+    },
     dailyCheckIns: {
         type: OptionType.NUMBER,
         description: "How many check-ins Tether may send per day",

@@ -14,7 +14,7 @@ import { ChannelStore, UserStore } from "@webpack/common";
 
 import { scheduleBackfill, stopBackfill } from "./backfill";
 import { TetherButton, TetherIcon } from "./ChatButton";
-import { markChannelSelected, openConversation, recordMessage, rememberLoadedChannels, syncDMTimes } from "./dmTimes";
+import { markChannelSelected, openConversation, recordMessage, refreshConversation, rememberLoadedChannels, syncDMTimes } from "./dmTimes";
 import { countNudgedToday, formatDaysAgo, getOverdueFriends, HOUR_MS, MINUTE_MS, mostRecentNudgeAt } from "./engine";
 import { getFriends } from "./friends";
 import { openTether, openTetherModal } from "./modal";
@@ -144,9 +144,10 @@ export default definePlugin({
         },
         CHANNEL_SELECT({ channelId }: { channelId?: string | null; }) {
             markChannelSelected(channelId);
+            if (channelId) void refreshConversation(channelId);
         },
-        MESSAGE_CREATE({ message }: { message: { id: string; channel_id: string; }; }) {
-            recordMessage(message.channel_id, message.id);
+        MESSAGE_CREATE({ message }: { message: { id: string; channel_id: string; author?: { id?: string; }; }; }) {
+            recordMessage(message.channel_id, message.id, message.author?.id === UserStore.getCurrentUser()?.id);
         }
     },
 

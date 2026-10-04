@@ -121,7 +121,7 @@ sequenceDiagram
 | Key | Scope | Contents |
 | --- | --- | --- |
 | `tether-state-<userId>` | per account | notBefore, muted, forgotten, tracked, lastNudgedAt, seenAt, checkedAt, attemptedAt |
-| `tether-dm-times-v2-<userId>` | per account | remoteFetchedAt and known last message timestamps |
+| `tether-dm-times-v3-<userId>` | per account | remoteFetchedAt, known last message timestamps, and (for recently seen chats) the last message author |
 | `tether-onboarded-v5-<userId>` | per account | one-time onboarding flag |
 
 ## Runtime caches, not persisted
@@ -129,5 +129,6 @@ sequenceDiagram
 | Name | Where | Purpose |
 | --- | --- | --- |
 | `baseTimes` | dmTimes | timestamps from the DM list and observations |
+| `lastAuthors` | dmTimes | last message author per person, only for chats seen live, opened manually, or refreshed when the Tether window opens |
 | `channelUsers` | dmTimes | channel id to person id map |
 | `protectedChannels` | dmTimes | channels opened through Tether, never closed by backfill |

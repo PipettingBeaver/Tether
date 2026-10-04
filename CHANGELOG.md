@@ -7,6 +7,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.1.0-beta.6] - 2026-10-04
+
+### Added
+
+- Extra wait after you send the last message: when Tether has seen that you spoke last in a chat, it now waits your normal threshold plus an extra configurable delay (7 days by default) before checking in. Known only for chats Tether has seen live or refreshed; unknown chats keep the normal threshold.
+- Viewing a chat now refreshes its last message, and opening the Tether window refreshes only the small batch it shows. This lets Tether learn who sent the last message even when the chat was quiet until now, at one request per chat and no more than once every few minutes.
+- A Settings button in the Tether window opens Tether's own settings directly, instead of going through the Vencord plugins list.
+
 ## [0.1.0-beta.5] - 2026-09-30
 
 ### Changed
