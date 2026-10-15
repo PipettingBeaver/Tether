@@ -14,37 +14,26 @@ In the plugin list for Vencord, this is how Tether appears:
 
 <img width="300" alt="Tether enable plugin UI" src="https://github.com/user-attachments/assets/5c911e27-5a8b-44c1-a4ee-956ff00ac626" />
 
-## a) Windows
-
-1. Download `Tether-Testing-Windows.zip` from the [Releases page](https://github.com/PipettingBeaver/Tether/releases).
+## a) Windows, macOS or Linux
+1. Download your respective OS zip from the [Releases page](https://github.com/PipettingBeaver/Tether/releases).
 2. Quit Discord, Vencord, or Vesktop completely, including the icon near the clock.
-3. Extract the zip, then double click "Windows - Start Here.bat". If Windows shows a blue warning, choose More info, then Run anyway.
-4. Follow the prompts. When it finishes, Tether is already turned on.
-
-## b) macOS
-
-1. Download `Tether-Testing-macOS.tar.gz` from the [Releases page](https://github.com/PipettingBeaver/Tether/releases).
-2. Quit Discord, Vencord, or Vesktop completely.
-3. Extract it, then double click "Mac - Start Here.command". If macOS blocks it, right click the file, choose Open, then Open again.
-4. Node.js 20 or newer is required. The launcher points you to it if it is missing.
-
-## c) Linux
-
-1. Download `Tether-Testing-Linux.tar.gz` from the [Releases page](https://github.com/PipettingBeaver/Tether/releases).
-2. Quit Discord, Vencord, or Vesktop completely.
-3. Extract it, then run `bash "Linux - Start Here.sh"`, or right click the file and choose Run in Terminal.
-
-## d) Browser (Web-based Discord)
+3. Extract the zip, then double click "Windows - Start Here" (.bat, .command, or .sh).
+- If Windows shows a blue warning, choose More info, then Run anyway.
+- If macOS blocks it, right click the file, choose Open, then Open again. Node.js 20 or newer is required. The launcher tells you if it is missing.
+4. Quit Discord, Vencord, or Vesktop completely.
+5. Follow the prompts. When it finishes, Tether is already turned on.
+  
+## b) Browser (Web-based Discord)
 
 1. Install a userscript manager (Such as ViolentMonkey on [Chrome](https://chromewebstore.google.com/detail/violentmonkey/jinjaccalgkegednnccohejagnlnfdag) or [Firefox](https://addons.mozilla.org/en-US/firefox/addon/violentmonkey/)).
-   - if using ViolentMonkey for Firefox, in Settings enable "Bypass CSP in Firefox" since Tether does not work without it.
+   - if using ViolentMonkey for Firefox, in Settings enable "Bypass CSP in Firefox" since Tether does not work without it. (Note: This may have changed in a future ViolentMonkey update)
 2. If you already use Vencord in your browser, remove or disable it first (Tether currently comes with a bundled unofficial Vencord, as Vencord is required as a framework). 
 3. Install the userscript from [this link](https://github.com/PipettingBeaver/Tether/releases/latest/download/Vencord-with-Tether.user.js), or paste the link into your manager's install-from-URL feature:
 4. Reload the Discord tab. Tether is on by default.
 
-## e) Already build Vencord from source (advanced)
+## c) Already build Vencord from source (advanced)
 
-If you already build Vencord from source, you can add Tether to your own build instead of using the launchers above. Tether expects a recent Vencord, so pull and rebuild first if your checkout is old.
+If you already build Vencord from source, you can add Tether to your own build instead of using the launchers above. Tether expects a recent Vencord, so pull and rebuild first if your checkout is old. This is also the most durable method until if/when Tether gets added to Vencord.
 
 1. Download this repository (green Code button, then Download ZIP) or clone it.
 2. Copy the `src` folder into your Vencord at `src/userplugins/tether`, so the plugin lives at `src/userplugins/tether/index.tsx`.
