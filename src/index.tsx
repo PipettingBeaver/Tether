@@ -34,7 +34,11 @@ async function loadPrivateChannels() {
     const load = ChannelStore.loadAllGuildAndPrivateChannelsFromDisk;
     if (typeof load !== "function") return;
 
-    await load.call(ChannelStore).catch(() => void 0);
+    try {
+        await load.call(ChannelStore);
+    } catch {
+        void 0;
+    }
 }
 
 async function check() {

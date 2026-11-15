@@ -7,6 +7,20 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.1.0-beta.7] - 2026-11-14
+
+### Changed
+
+- Updated Tether for Vencord v1.15.14. The error toast now uses Vencord's current toast API, and the settings header uses the new components.
+- The installer now requires Node.js 22 or newer, matching current Vencord.
+- On Windows, the installer now uses the portable Node it just downloaded, so a machine with no system Node can finish instead of failing at the `npx` step. It also downloads that portable copy when the system Node is older than 22.
+- The installer detects and asks you to close Discord PTB, Canary, and Development as well as stable, and finds them on more Linux install layouts.
+- Windows test packages use Windows line endings for the batch and PowerShell files, so the launcher labels resolve reliably.
+
+### Fixed
+
+- The installer no longer mistakes its own `--target=discord` argument for a running Discord.
+
 ## [0.1.0-beta.6] - 2026-10-04
 
 ### Added
@@ -69,7 +83,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Timestamps only, never message contents. Everything is stored locally, per account.
 - Windows, macOS, and Linux installers, and a browser userscript.
 
-[unreleased]: https://github.com/PipettingBeaver/Tether/compare/v0.1.0-beta.5...HEAD
+[unreleased]: https://github.com/PipettingBeaver/Tether/compare/v0.1.0-beta.7...HEAD
+[0.1.0-beta.7]: https://github.com/PipettingBeaver/Tether/compare/v0.1.0-beta.6...v0.1.0-beta.7
+[0.1.0-beta.6]: https://github.com/PipettingBeaver/Tether/compare/v0.1.0-beta.5...v0.1.0-beta.6
 [0.1.0-beta.5]: https://github.com/PipettingBeaver/Tether/compare/v0.1.0-beta.4...v0.1.0-beta.5
 [0.1.0-beta.4]: https://github.com/PipettingBeaver/Tether/compare/v0.1.0-beta.3...v0.1.0-beta.4
 [0.1.0-beta.3]: https://github.com/PipettingBeaver/Tether/compare/v0.1.0-beta.2...v0.1.0-beta.3

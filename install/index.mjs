@@ -8,7 +8,7 @@
 import { spawnSync } from "node:child_process";
 import { cpSync, existsSync, mkdirSync, readdirSync, readFileSync, renameSync, rmSync, writeFileSync } from "node:fs";
 import { homedir } from "node:os";
-import { basename, dirname, join, resolve } from "node:path";
+import { basename, delimiter, dirname, join, resolve } from "node:path";
 import { createInterface } from "node:readline";
 import { fileURLToPath } from "node:url";
 
@@ -26,18 +26,23 @@ const targetArg = args.find(arg => arg.startsWith("--target="))?.split("=")[1];
 const requestedTarget = ["vesktop", "discord", "both"].includes(targetArg) ? targetArg : "auto";
 const dataDirArg = args.find(arg => arg.startsWith("--data-dir="))?.split("=")[1];
 
+function envDir(name) {
+    const value = process.env[name];
+    return value ? value : undefined;
+}
+
 function dataRoot() {
     if (dataDirArg) return resolve(dataDirArg);
 
     if (process.platform === "win32") {
-        return join(process.env.LOCALAPPDATA ?? join(homedir(), "AppData", "Local"), "Tether");
+        return join(envDir("LOCALAPPDATA") ?? join(homedir(), "AppData", "Local"), "Tether");
     }
 
     if (process.platform === "darwin") {
         return join(homedir(), "Library", "Application Support", "Tether");
     }
 
-    return join(process.env.XDG_DATA_HOME ?? join(homedir(), ".local", "share"), "tether");
+    return join(envDir("XDG_DATA_HOME") ?? join(homedir(), ".local", "share"), "tether");
 }
 
 const DATA_DIR = dataRoot();
@@ -45,12 +50,21 @@ const VENCORD_DIR = join(DATA_DIR, "vencord");
 const PLUGIN_DIR = join(VENCORD_DIR, "src", "userplugins", PLUGIN_NAME);
 const DIST_DIR = join(VENCORD_DIR, "dist");
 const DIST_FILES = ["vencordDesktopMain.js", "vencordDesktopPreload.js", "vencordDesktopRenderer.js", "vencordDesktopRenderer.css"];
+const DISCORD_NAMES = ["Discord", "DiscordPTB", "DiscordCanary", "DiscordDevelopment"];
+const PATH_KEY = Object.keys(process.env).find(key => key.toLowerCase() === "path") ?? "PATH";
+
+function childEnv(extra) {
+    const env = { ...process.env };
+    const nodeBin = dirname(process.execPath);
+    env[PATH_KEY] = process.env[PATH_KEY] ? `${nodeBin}${delimiter}${process.env[PATH_KEY]}` : nodeBin;
+    return extra ? { ...env, ...extra } : env;
+}
 
 function vesktopStateCandidates() {
     const home = homedir();
 
     if (process.platform === "win32") {
-        const appData = process.env.APPDATA ?? join(home, "AppData", "Roaming");
+        const appData = envDir("APPDATA") ?? join(home, "AppData", "Roaming");
         return [join(appData, "vesktop", "state.json"), join(appData, "Vesktop", "state.json")];
     }
 
@@ -62,7 +76,7 @@ function vesktopStateCandidates() {
     }
 
     return [
-        join(process.env.XDG_CONFIG_HOME ?? join(home, ".config"), "vesktop", "state.json"),
+        join(envDir("XDG_CONFIG_HOME") ?? join(home, ".config"), "vesktop", "state.json"),
         join(home, ".var", "app", "dev.vencord.Vesktop", "config", "vesktop", "state.json")
     ];
 }
@@ -80,15 +94,28 @@ function hasDiscord() {
     const home = homedir();
 
     if (process.platform === "win32") {
-        const local = process.env.LOCALAPPDATA ?? join(home, "AppData", "Local");
-        return ["Discord", "DiscordPTB", "DiscordCanary"].some(name => existsSync(join(local, name)));
+        const local = envDir("LOCALAPPDATA") ?? join(home, "AppData", "Local");
+        return DISCORD_NAMES.some(name => existsSync(join(local, name)));
     }
 
     if (process.platform === "darwin") {
-        return ["Discord.app", "Discord PTB.app", "Discord Canary.app"].some(name => existsSync(join("/Applications", name)));
+        return ["Discord.app", "Discord PTB.app", "Discord Canary.app", "Discord Development.app"].some(name => existsSync(join("/Applications", name)));
     }
 
-    return ["/opt/discord", "/usr/share/discord", "/opt/Discord"].some(path => existsSync(path));
+    const share = envDir("XDG_DATA_HOME") ?? join(home, ".local", "share");
+    return [
+        "/opt/discord",
+        "/opt/discord-ptb",
+        "/opt/discord-canary",
+        "/usr/share/discord",
+        "/usr/share/discord-ptb",
+        "/usr/share/discord-canary",
+        "/usr/lib64/discord",
+        join(share, "discord"),
+        join(share, "dvm"),
+        "/var/lib/flatpak/app/com.discordapp.Discord",
+        join(share, "flatpak", "app", "com.discordapp.Discord")
+    ].some(path => existsSync(path));
 }
 
 function quoteWindowsArg(arg) {
@@ -100,7 +127,7 @@ function run(command, commandArgs, cwd, env) {
 
     const result = spawnSync(command, finalArgs, {
         cwd,
-        env: env ? { ...process.env, ...env } : process.env,
+        env: childEnv(env),
         stdio: "inherit",
         shell: process.platform === "win32"
     });
@@ -113,28 +140,32 @@ function capture(command, commandArgs) {
 
     const result = spawnSync(command, finalArgs, {
         encoding: "utf8",
+        env: childEnv(),
         shell: process.platform === "win32"
     });
 
     return result.status === 0 ? (result.stdout ?? "") : null;
 }
 
-function isProcessRunning(windowsName, unixPattern) {
+function isProcessRunning(windowsNames, unixPattern) {
     if (process.platform === "win32") {
         const output = capture("tasklist", []);
-        return output?.toLowerCase().includes(windowsName.toLowerCase()) ?? false;
+        if (output == null) return false;
+
+        const lower = output.toLowerCase();
+        return windowsNames.some(name => lower.includes(name.toLowerCase()));
     }
 
-    const result = spawnSync("pgrep", ["-if", unixPattern], { encoding: "utf8" });
+    const result = spawnSync("pgrep", ["-ix", unixPattern], { encoding: "utf8" });
     return result.status === 0;
 }
 
 function isVesktopRunning() {
-    return isProcessRunning("Vesktop.exe", "vesktop");
+    return isProcessRunning(["Vesktop.exe"], "vesktop");
 }
 
 function isDiscordRunning() {
-    return isProcessRunning("Discord.exe", "discord");
+    return isProcessRunning(DISCORD_NAMES.map(name => `${name}.exe`), "discord.*");
 }
 
 async function question(message) {
@@ -212,8 +243,8 @@ async function ensureClosed(target) {
 }
 
 function checkTools() {
-    if (Number(process.versions.node.split(".")[0]) < 20) {
-        throw new Error("Node.js 20 or newer is required. Get it from https://nodejs.org");
+    if (Number(process.versions.node.split(".")[0]) < 22) {
+        throw new Error("Node.js 22 or newer is required. Get it from https://nodejs.org");
     }
 
     if (capture("npx", ["--version"]) == null) {
@@ -377,7 +408,7 @@ What it does:
      Discord: injects the build with Vencord's own installer
 
 Quit Vesktop or Discord before running this so the install is not overwritten.
-Node.js 20 or newer must already be installed, or use the launcher in this folder.
+Node.js 22 or newer must already be installed, or use the launcher in this folder.
 `);
 }
 

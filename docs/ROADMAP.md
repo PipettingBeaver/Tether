@@ -1,6 +1,6 @@
 # Tether roadmap
 
-Status: working local plugin, not yet upstreamed. Last updated 2026-09-25.
+Status: working local plugin, not yet upstreamed. Last updated 2026-11-14.
 
 ## What works today
 
@@ -20,7 +20,7 @@ Status: working local plugin, not yet upstreamed. Last updated 2026-09-25.
 - Check-in flow: one friend per notification, daily cap (default 3), notification cooldown (default 6 hours). The modal offers Message, Delay Tether (3 days by default), Untether, and Forget on untethered friends, plus Refresh Tethers to re-pull live data and Delay everyone. Acting on someone pulls the next waiting friend into view. The corner toast opens the named friend's chat with one click. Opening the list marks its entries as seen so the automatic check does not immediately repeat the same friends. Clicking a notification opens the modal pinned to the friend it named.
 - DM timestamp learning: channel store overlay on every read, live updates from the message event, on-demand refresh when opening the list or messaging someone through the modal, cached DM list from Discord (6 hour TTL, forced refresh at most once a minute), and every observed channel is persisted locally. Only 1:1 DMs count; group DMs, channels with an owner, and channels whose recipient is the current user are ignored.
 - Privacy: timestamps only, no message contents, no third party, state in local IndexedDB keyed per account.
-- Tests: 17 unit tests for the engine. `pnpm testTsc` and ESLint clean.
+- Tests: 21 unit tests for the engine. `pnpm test:ts` and ESLint clean.
 
 ## Known issues
 
@@ -29,7 +29,7 @@ Status: working local plugin, not yet upstreamed. Last updated 2026-09-25.
 3. Placeholder author. `index.tsx` uses `{ name: "tan", id: BigInt(0) }`. Needs a real Discord ID before any public release or PR.
 4. Notification surfaces. A check produces an OS notification plus a top notice. The toast is deliberately not permanent: `permanent: true` blocks Vencord's notification queue until dismissed, which can silence every later notification. Consider consolidating to one surface.
 5. Manual learning does not scale. Opening a DM one by one is fine for dozens, painful for hundreds. A per-row "Open DM" button in the friend manager would make learning one click instead of a search.
-6. Build workflow footguns. Piping `pnpm build` through `tail` hides a nonzero exit and can leave a stale `dist` that Vesktop happily loads. Always capture the exit code. There is also a pnpm version warning (Vencord pins 11.9.0, local is 12.6.0); harmless but noisy.
+6. Build workflow footguns. Piping `pnpm build` through `tail` hides a nonzero exit and can leave a stale `dist` that Vesktop happily loads. Always capture the exit code. There is also a pnpm version warning (Vencord pins 12.15.0, local is 12.14.0); harmless but noisy.
 7. Unverified fallbacks. `dmTimes.ts` has several channel-store fallbacks (`getSortedPrivateChannels`, `getDMUserIds` + `getDMChannelFromUserId`). Once the real method is confirmed, delete the dead paths.
 8. Existing installs keep their stored list mode. Changing the default to Whitelist only affects fresh installs; pick Whitelist once by hand if needed.
 
@@ -64,7 +64,7 @@ pnpm -C ~/PipettingBeaver_Github/Vencord build
 pnpm -C ~/PipettingBeaver_Github/Vencord exec tsx src/userplugins/tether/tests/engine.test.ts
 
 # typecheck and lint
-pnpm -C ~/PipettingBeaver_Github/Vencord testTsc
+pnpm -C ~/PipettingBeaver_Github/Vencord test:ts
 pnpm -C ~/PipettingBeaver_Github/Vencord exec eslint src/userplugins/tether
 
 # update Vencord core (then restart Vesktop)

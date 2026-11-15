@@ -6,7 +6,7 @@
  */
 
 import { spawnSync } from "node:child_process";
-import { chmodSync, cpSync, mkdirSync, rmSync, writeFileSync } from "node:fs";
+import { chmodSync, cpSync, mkdirSync, readFileSync, readdirSync, rmSync, writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { basename, dirname, join, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
@@ -26,13 +26,25 @@ function copyRepo(destination) {
     });
 }
 
+function normalizeWindowsLineEndings(directory) {
+    for (const entry of readdirSync(directory, { withFileTypes: true })) {
+        const path = join(directory, entry.name);
+        if (entry.isDirectory()) {
+            normalizeWindowsLineEndings(path);
+        } else if (/\.(bat|cmd|ps1)$/i.test(entry.name)) {
+            const text = readFileSync(path, "utf8").replace(/\r?\n/g, "\r\n");
+            writeFileSync(path, text);
+        }
+    }
+}
+
 function writeLaunchers(stage, platform) {
     if (platform === "windows") {
         writeFileSync(join(stage, "Windows - Start Here.bat"), '@echo off\r\ncall "%~dp0install\\Tether-Installer.bat" %*\r\n');
         writeFileSync(join(stage, "READ ME FIRST.txt"), [
             "Tether - Friend Beta Testing Version",
             "",
-            "1. Quit Discord completely, including the icon near the clock.",
+            "1. Quit Discord or Vesktop completely, including the icon near the clock.",
             "2. Double click \"Windows - Start Here.bat\".",
             "3. If Windows shows a blue warning, click More info, then Run anyway.",
             "4. If Node.js is missing, the installer downloads it once on its own.",
@@ -56,7 +68,7 @@ function writeLaunchers(stage, platform) {
             "#!/bin/bash",
             'cd "$(dirname "$0")"',
             'if ! command -v node >/dev/null 2>&1; then',
-            '    echo "Node.js 20 or newer is needed. Install it from https://nodejs.org and run this again."',
+            '    echo "Node.js 22 or newer is needed. Install it from https://nodejs.org and run this again."',
             '    read -r -p "Press Enter to close."',
             "    exit 1",
             "fi",
@@ -72,7 +84,7 @@ function writeLaunchers(stage, platform) {
             "1. Quit Discord or Vesktop completely.",
             "2. Double click \"Mac - Start Here.command\".",
             "3. If macOS blocks it, right click the file, choose Open, then Open again.",
-            "4. Node.js 20 or newer is required. Get it from https://nodejs.org if prompted.",
+            "4. Node.js 22 or newer is required. Get it from https://nodejs.org if prompted.",
             "5. Follow the prompts. It tells you when it is done.",
             "6. Open Discord or Vesktop, then Settings, Vencord, Plugins, and check Tether.",
             "",
@@ -131,6 +143,7 @@ function main() {
     console.log("Staging the Windows package...");
     copyRepo(winStage);
     writeLaunchers(winStage, "windows");
+    normalizeWindowsLineEndings(winStage);
 
     console.log("Staging the Linux package...");
     copyRepo(linuxStage);

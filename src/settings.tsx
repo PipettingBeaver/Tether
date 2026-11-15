@@ -6,7 +6,7 @@
 
 import { definePluginSettings } from "@api/Settings";
 import { Flex } from "@components/Flex";
-import { HeadingSecondary } from "@components/Heading";
+import { Heading } from "@components/Heading";
 import { Paragraph } from "@components/Paragraph";
 import { OptionType } from "@utils/types";
 
@@ -24,7 +24,7 @@ function SettingsIntro() {
 }
 
 function VariablesHeader() {
-    return <HeadingSecondary>You can manually configure variables below</HeadingSecondary>;
+    return <Heading tag="h3">You can manually configure variables below</Heading>;
 }
 
 export default definePluginSettings({

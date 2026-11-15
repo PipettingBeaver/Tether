@@ -15,13 +15,12 @@ In the plugin list for Vencord, this is how Tether appears:
 <img width="300" alt="Tether enable plugin UI" src="https://github.com/user-attachments/assets/5c911e27-5a8b-44c1-a4ee-956ff00ac626" />
 
 ## a) Windows, macOS or Linux
-1. Download your respective OS zip from the [Releases page](https://github.com/PipettingBeaver/Tether/releases).
+1. Download your respective OS package (zip for Windows, tar.gz for macOS and Linux) from the [Releases page](https://github.com/PipettingBeaver/Tether/releases).
 2. Quit Discord, Vencord, or Vesktop completely, including the icon near the clock.
-3. Extract the zip, then double click "Windows - Start Here" (.bat, .command, or .sh).
-- If Windows shows a blue warning, choose More info, then Run anyway.
-- If macOS blocks it, right click the file, choose Open, then Open again. Node.js 20 or newer is required. The launcher tells you if it is missing.
-4. Quit Discord, Vencord, or Vesktop completely.
-5. Follow the prompts. When it finishes, Tether is already turned on.
+3. Extract the package, then double click "Windows - Start Here" (.bat, .command, or .sh).
+    - If Windows shows a blue warning, choose More info, then Run anyway.
+    - If macOS blocks it, right click the file, choose Open, then Open again. Node.js 22 or newer is required. The launcher tells you if it is missing.
+4. Follow the prompts. When it finishes, Tether is already turned on.
   
 ## b) Browser (Web-based Discord)
 

@@ -2,7 +2,7 @@
 set -euo pipefail
 
 VENV="${VENV:-$HOME/PipettingBeaver_Github/Vencord}"
-PNPM="${PNPM:-$HOME/.local/bin/pnpm}"
+PNPM="${PNPM:-pnpm}"
 
 git -C "$VENV" pull --ff-only
 "$PNPM" -C "$VENV" install --frozen-lockfile

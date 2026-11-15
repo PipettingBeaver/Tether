@@ -44,7 +44,8 @@ A real Windows machine is the only meaningful test for the injection path. Optio
 Checklist for the tester:
 
 - Does SmartScreen appear, and does More info, then Run anyway work?
-- Does the portable Node download succeed without any manual install?
+- On a machine with no system Node, does the portable Node download succeed, and does the build continue past it? The installer must use the Node it just downloaded for `npx` and for Vencord's injector, not whatever is on `PATH`.
+- Does the installer ask you to close Discord PTB, Canary, or Development as well as stable if those are running?
 - Does the consent screen show the right detected app and a clear list of changes?
 - Does the build finish, and does Vencord appear in Discord afterwards?
 - Is Tether enabled by default under Settings, Vencord, Plugins, and can it be toggled off and on?
@@ -89,7 +90,7 @@ Caveats to pass along: browser storage is separate from the desktop app, there i
 
 ## Testing on macOS
 
-Use `Tether-Testing-macOS.tar.gz`. It needs Node.js 20 or newer, so the launcher prints a link if it is missing.
+Use `Tether-Testing-macOS.tar.gz`. It needs Node.js 22 or newer, so the launcher prints a link if it is missing.
 
 - Double click "Mac - Start Here.command". If macOS blocks it, right click, choose Open, then Open again.
 - Everything else matches the Windows and Linux flow.

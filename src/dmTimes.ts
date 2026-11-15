@@ -7,7 +7,7 @@
 import * as DataStore from "@api/DataStore";
 import { Logger } from "@utils/Logger";
 import { Channel } from "@vencord/discord-types";
-import { ChannelActionCreators, ChannelRouter, ChannelStore, RestAPI, SelectedChannelStore, SnowflakeUtils, Toasts, UserStore } from "@webpack/common";
+import { ChannelActionCreators, ChannelRouter, ChannelStore, RestAPI, SelectedChannelStore, showToast, SnowflakeUtils, UserStore } from "@webpack/common";
 
 import { FriendInfo, HOUR_MS, MINUTE_MS } from "./engine";
 
@@ -307,10 +307,9 @@ async function createConversation(friendId: string, name: string) {
     } catch (error) {
         const reason = error instanceof Error ? error.message : String(error);
         logger.error(`Could not open a conversation with ${name}`, error);
-        Toasts.show({
-            message: `Could not open the chat with ${name}: ${reason.slice(0, 120)}`,
-            type: Toasts.Type.FAILURE,
-            id: Toasts.genId()
+        showToast({
+            text: `Could not open the chat with ${name}: ${reason.slice(0, 120)}`,
+            variant: "critical"
         });
     }
 }

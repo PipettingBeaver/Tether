@@ -16,7 +16,7 @@ Run from the Vencord checkout (adjust the path):
 ```sh
 # build and typecheck/lint
 pnpm -C ~/PipettingBeaver_Github/Vencord build
-pnpm -C ~/PipettingBeaver_Github/Vencord testTsc
+pnpm -C ~/PipettingBeaver_Github/Vencord test:ts
 pnpm -C ~/PipettingBeaver_Github/Vencord exec eslint src/userplugins/tether
 
 # unit tests (node:test + node:assert/strict, no test runner in Tether itself)
@@ -54,7 +54,7 @@ node tools/build-browser.mjs
 `README.md` (user-facing install) and `docs/ARCHITECTURE.md` (module map, data flow, storage keys), `docs/ROADMAP.md` (local commands, known issues, upstream PR plan), `docs/TESTING.md` (artifact testing), `docs/REVIEW.md` (audit). Prefer these over guessing, and keep them in sync when behavior changes.
 
 ## Definition of done
-- `tsx src/userplugins/tether/tests/engine.test.ts` passes (18 tests), and `testTsc` + eslint pass for `src/userplugins/tether`.
+- `tsx src/userplugins/tether/tests/engine.test.ts` passes (21 tests), and `test:ts` + eslint pass for `src/userplugins/tether`.
 - New rules/logic live in `src/engine.ts` with tests; every timer/listener added in `start()` is cleared in `stop()`.
 - `CHANGELOG.md` gets an `## [Unreleased]` entry for user-visible changes.
 - Generated artifacts stay outside the repo; releases publish to `PipettingBeaver/Tether` only, via explicit `-R` (never another repo's page).
