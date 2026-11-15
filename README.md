@@ -10,6 +10,7 @@ Tether is a small Discord add-on to help keep in touch. It notices when you have
 
 These are beta builds. Expect rough edges, and please tell me what breaks.
 Works for Vencord and Vesktop. Does NOT currently work for BetterDiscord.
+I don't currently have a macOS tester, so the Mac build is untested. If you can try it, please reach out with what works and what breaks.
 In the plugin list for Vencord, this is how Tether appears:
 
 <img width="300" alt="Tether enable plugin UI" src="https://github.com/user-attachments/assets/5c911e27-5a8b-44c1-a4ee-956ff00ac626" />

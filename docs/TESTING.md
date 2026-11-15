@@ -106,6 +106,6 @@ Use `Tether-Testing-macOS.tar.gz`. It needs Node.js 22 or newer, so the launcher
 
 ## Known gaps
 
-- macOS support is new and untested.
+- macOS support is new and untested, and there is no regular macOS tester yet. A Mac tester would be very welcome.
 - The backfill still pauses while a Tether-opened chat is on screen.
 - The Windows Node bootstrap depends on nodejs.org being reachable.
