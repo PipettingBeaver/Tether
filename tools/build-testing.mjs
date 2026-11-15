@@ -93,6 +93,9 @@ function writeLaunchers(stage, platform) {
             "Client mods are not officially supported by Discord.",
             "This is an unofficial Vencord build made for Tether, not supported by the Vencord team.",
             "Tether reads timestamps only and sends nothing anywhere.",
+            "",
+            "macOS support is new and there is no regular Mac tester yet.",
+            "If you can test on a Mac, please reach out with what works and what breaks.",
             ""
         ].join("\n"));
         return;

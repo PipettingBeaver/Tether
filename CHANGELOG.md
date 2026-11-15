@@ -9,7 +9,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
-- The README now asks for a macOS tester, since there is no regular Mac tester yet.
+- The README and the macOS package now ask for a macOS tester, since there is no regular Mac tester yet.
 
 ## [0.1.0-beta.7] - 2026-11-14
 
